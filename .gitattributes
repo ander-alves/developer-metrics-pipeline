@@ -1,0 +1,20 @@
+# Force LF line endings on shell scripts and Dockerfiles so they keep working
+# when the repo is cloned on Windows with autocrlf=true. Without this, scripts
+# executed inside Linux containers (init-aws.sh, migrations) break with
+# "/bin/bash^M: bad interpreter" errors.
+* text=auto eol=lf
+
+*.sh    text eol=lf
+*.bash  text eol=lf
+Dockerfile text eol=lf
+Dockerfile.* text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+
+# Binary files — never normalize.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary

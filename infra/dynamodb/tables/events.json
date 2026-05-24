@@ -1,0 +1,16 @@
+{
+  "TableName": "events",
+  "KeySchema": [
+    {
+      "AttributeName": "event_id",
+      "KeyType": "HASH"
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "event_id",
+      "AttributeType": "S"
+    }
+  ],
+  "BillingMode": "PAY_PER_REQUEST"
+}

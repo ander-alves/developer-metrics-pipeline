@@ -1,0 +1,7 @@
+go 1.24
+
+use (
+	./services/processor
+	./services/aggregator
+	./tools/dev
+)

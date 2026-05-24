@@ -1,0 +1,112 @@
+services:
+  localstack:
+    image: localstack/localstack:3.8
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sqs,dynamodb
+      - DEBUG=0
+      - PERSISTENCE=0
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    volumes:
+      - "localstack-data:/var/lib/localstack"
+      - ./infra/localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh
+      - ./infra:/etc/localstack/infra:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: ["CMD", "awslocal", "sqs", "list-queues"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - metrics-network
+    restart: unless-stopped
+
+  processor:
+    build:
+      context: ./services/processor
+      dockerfile: Dockerfile
+    container_name: processor
+    ports:
+      - "8081:8081"
+    environment:
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - SQS_RAW_EVENTS_QUEUE=http://localstack:4566/000000000000/raw-events
+      - SQS_PROCESSED_EVENTS_QUEUE=http://localstack:4566/000000000000/processed-events
+      - WORKER_COUNT=4
+      - LOG_LEVEL=info
+    depends_on:
+      localstack:
+        condition: service_healthy
+    networks:
+      - metrics-network
+    restart: unless-stopped
+    stop_grace_period: 35s
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  aggregator:
+    build:
+      context: ./services/aggregator
+      dockerfile: Dockerfile
+    container_name: aggregator
+    ports:
+      - "8080:8080"
+    environment:
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - SQS_PROCESSED_EVENTS_QUEUE=http://localstack:4566/000000000000/processed-events
+      - DYNAMODB_ENDPOINT=http://localstack:4566
+      - DYNAMODB_EVENTS_TABLE=events
+      - DYNAMODB_SUMMARY_TABLE=developer_summary
+      - LOG_LEVEL=info
+    depends_on:
+      localstack:
+        condition: service_healthy
+    networks:
+      - metrics-network
+    restart: unless-stopped
+    stop_grace_period: 10s
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  seed:
+    profiles: ["seed"]
+    image: amazon/aws-cli:latest
+    entrypoint: ["bash", "/scripts/seed-docker.sh"]
+    volumes:
+      - ./scripts/seed-docker.sh:/scripts/seed-docker.sh:ro
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    depends_on:
+      localstack:
+        condition: service_healthy
+    networks:
+      - metrics-network
+
+networks:
+  metrics-network:
+    driver: bridge
+
+volumes:
+  localstack-data:

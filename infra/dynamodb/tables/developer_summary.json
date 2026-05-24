@@ -1,0 +1,16 @@
+{
+  "TableName": "developer_summary",
+  "KeySchema": [
+    {
+      "AttributeName": "developer_id",
+      "KeyType": "HASH"
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "developer_id",
+      "AttributeType": "S"
+    }
+  ],
+  "BillingMode": "PAY_PER_REQUEST"
+}
