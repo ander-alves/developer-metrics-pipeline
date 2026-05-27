@@ -181,3 +181,4 @@ go run ./tools/dev test
 Todas configuradas inline em [`docker-compose.yml`](./docker-compose.yml).
 Os defaults apontam pro LocalStack local — basta sobrescrever no compose
 pra mirar em AWS real.
+
