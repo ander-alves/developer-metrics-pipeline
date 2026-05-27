@@ -57,7 +57,7 @@ Resposta esperada:
 
 | Cenário | Comandos |
 |---|---|
-| **Só Docker** (sem Go no host) | `docker-compose up -d` → `docker-compose run seed` |
+| **Só Docker** (sem Go no host) | `docker-compose up -d` → `docker-compose run seed` → `docker-compose logs -f` → `docker-compose stop` |
 | Tudo (Windows/macOS/Linux) | `go run ./tools/dev up` → `go run ./tools/dev seed` |
 | macOS/Linux com make | `make up` → `make seed` |
 
@@ -182,3 +182,7 @@ Todas configuradas inline em [`docker-compose.yml`](./docker-compose.yml).
 Os defaults apontam pro LocalStack local — basta sobrescrever no compose
 pra mirar em AWS real.
 
+# Developer Metrics Pipeline
+
+## Video Apresentaçao
+[Video Explanation Link](https://1drv.ms/v/c/1f4ab2d7959005a1/IQCaP1lVXnxOQZqw-cX0EZP7Ae8lufME1CmwKS-KKdPxR_0?e=Wly0ZX)
