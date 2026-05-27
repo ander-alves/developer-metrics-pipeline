@@ -1,0 +1,101 @@
+basePath: /
+definitions:
+  domain.DeveloperSummary:
+    properties:
+      avg_review_time_minutes:
+        type: number
+      developer_id:
+        type: string
+      events_processed:
+        type: integer
+      last_activity:
+        type: string
+      review_time_events_count:
+        type: integer
+      total_commits:
+        type: integer
+      total_pull_requests:
+        type: integer
+      total_review_time_minutes:
+        type: number
+      updated_at:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Aggregated developer productivity metrics — commits, pull requests,
+    review time.
+  title: Developer Metrics API
+  version: "1.0"
+paths:
+  /health:
+    get:
+      description: Returns 200 when the aggregator process is running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Liveness probe
+      tags:
+      - ops
+  /metrics/{developer_id}:
+    get:
+      description: Returns every processed event stored for the given developer
+      parameters:
+      - description: Developer ID
+        in: path
+        name: developer_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: developer_id is required
+          schema:
+            type: string
+        "500":
+          description: internal error
+          schema:
+            type: string
+      summary: List developer events
+      tags:
+      - metrics
+  /metrics/{developer_id}/summary:
+    get:
+      description: Returns aggregated totals (commits, PRs, review time) for the developer
+      parameters:
+      - description: Developer ID
+        in: path
+        name: developer_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.DeveloperSummary'
+        "400":
+          description: developer_id is required
+          schema:
+            type: string
+        "500":
+          description: internal error
+          schema:
+            type: string
+      summary: Developer summary
+      tags:
+      - metrics
+swagger: "2.0"

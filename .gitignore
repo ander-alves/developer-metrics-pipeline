@@ -1,55 +1,69 @@
-# Binaries
+# =========================
+# 🔧 Build / Binários
+# =========================
+bin/
+build/
+dist/
+
+# binários Go (caso gerados na raiz)
 *.exe
 *.exe~
 *.dll
 *.so
-*.so.*
 *.dylib
-processor
-aggregator
-devruntime
-
-# Test binaries
-*.test
-
-# Output of go coverage
 *.out
+
+# =========================
+# 🧪 Testes / Coverage
+# =========================
+*.test
+*.cover
 .coverage
 
-# Go workspace sums are local-only; the workspace file itself (go.work) is
-# intentionally committed so "go run ./tools/dev" works from the repo root
-# without users having to cd into each module.
-go.work.sum
-
-# Dependency directories
+# =========================
+# 📦 Dependências
+# =========================
 vendor/
 
-# IDE
-.idea/
+# =========================
+# 🧠 Workspace
+# =========================
+go.work.sum
+
+# =========================
+# ⚙️ Ambiente
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# 🐳 Docker
+# =========================
+.docker/
+
+# =========================
+# 🧾 Logs
+# =========================
+*.log
+
+# =========================
+# 💻 IDE / OS
+# =========================
 .vscode/
+.idea/
 *.swp
 *.swo
 *~
 .DS_Store
 
-# Environment
-.env
-.env.local
-.env.*.local
-
-# Docker
-.docker/
-
-# Logs
-*.log
-
-# Build artifacts
-dist/
-build/
-
-# LocalStack data
+# =========================
+# ☁️ Infra local
+# =========================
+/tmp/
 /tmp/localstack/
 
-
-#Ignore vscode AI rules
+# =========================
+# 🤖 Misc
+# =========================
 .github/instructions/codacy.instructions.md
